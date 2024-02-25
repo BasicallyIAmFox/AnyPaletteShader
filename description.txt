@@ -1,0 +1,4 @@
+Palette Shader mod allows to make your world use specific colors instead of default colors!
+
+Credits:
+- Lion8cake: mod icon
