@@ -33,6 +33,14 @@ public static class InstructionExtensions {
 		return instruction.MatchLdloc(variableIndex.ToInt());
 	}
 
+	public static bool MatchLdloca(this Instruction instruction, out LocalVariableIndex variableIndex) {
+		bool value = instruction.MatchLdloca(out int index);
+
+		variableIndex = new LocalVariableIndex((uint)index);
+
+		return value;
+	}
+
 	public static bool MatchStloc(this Instruction instruction, out LocalVariableIndex variableIndex) {
 		bool value = instruction.MatchStloc(out int index);
 
@@ -48,10 +56,14 @@ public static class InstructionExtensions {
 
 partial class ILCursorExtensions {
 	public static ILCursor EmitLdloc(this ILCursor cursor, LocalVariableIndex variableIndex) {
-		return cursor.EmitLdloc(variableIndex);
+		return cursor.EmitLdloc(variableIndex.ToInt());
+	}
+
+	public static ILCursor EmitLdloca(this ILCursor cursor, LocalVariableIndex variableIndex) {
+		return cursor.EmitLdloca(variableIndex.ToInt());
 	}
 
 	public static ILCursor EmitStloc(this ILCursor cursor, LocalVariableIndex variableIndex) {
-		return cursor.EmitStloc(variableIndex);
+		return cursor.EmitStloc(variableIndex.ToInt());
 	}
 }
