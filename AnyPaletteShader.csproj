@@ -13,9 +13,6 @@
 		<NoWarn>$(NoWarn);MSB3270;X4717;CS0436</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
-	<ItemGroup>
-	  <None Remove="description_workshop.txt" />
-	</ItemGroup>
 	
   <!-- References -->
 	<ItemGroup>
@@ -24,10 +21,6 @@
 
     <!-- We do not publicize methods cause they will cause issues if one of publicized methods is overriden -->
 		<Publicize Include="tModLoader" PublicizeTarget="Fields, Types" />
-
-		<Reference Include="ConciseModList">
-			<HintPath>lib\ConciseModList@1.3.3.dll</HintPath>
-		</Reference>
 	</ItemGroup>
 
   <!-- Shader compiling -->
