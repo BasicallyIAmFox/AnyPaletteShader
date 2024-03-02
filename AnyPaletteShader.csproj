@@ -13,6 +13,9 @@
 		<NoWarn>$(NoWarn);MSB3270;X4717;CS0436</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="description_workshop.txt" />
+	</ItemGroup>
 	
   <!-- References -->
 	<ItemGroup>

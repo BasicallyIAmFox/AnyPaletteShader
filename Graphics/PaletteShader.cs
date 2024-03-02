@@ -18,22 +18,19 @@ using AnyPaletteShader.DataStructures;
 using AnyPaletteShader.IO;
 using AnyPaletteShader.Utilities;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
+using System.Diagnostics.CodeAnalysis;
 using Terraria;
 using Terraria.Graphics.Shaders;
 
 namespace AnyPaletteShader.Graphics;
 
 public sealed class PaletteShader : ShaderData {
-	public static PaletteShader Instance { get; } = new(
-		shader: new Ref<Effect>(AnyPaletteShader.Instance.Assets.Request<Effect>("Effects/PaletteShader", AssetRequestMode.ImmediateLoad).Value),
-		passName: "FilterMyShader"
-	);
+	[MaybeNull] public static PaletteShader Instance { get; internal set; }
 
 	private Texture2D? palTex;
 
-	private PaletteShader(Ref<Effect> shader, string passName) : base(shader, passName) {
-		palTex = PaletteIO.LoadAsTexture2D(PaletteIO.PalettePath);
+	internal PaletteShader(Ref<Effect> shader, string passName) : base(shader, passName) {
+		palTex = PaletteIO.LoadFromConfigAsTexture2DOrNullIfEmpty();
 	}
 
 	public PaletteShader UsePalette(Palette palette) {

@@ -15,10 +15,12 @@
 //
 
 using AnyPaletteShader.DataStructures;
+using AnyPaletteShader.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace AnyPaletteShader.IO;
 
@@ -35,12 +37,23 @@ public static class PaletteIO {
 			);
 
 			using var file = new FileStream(handle, FileAccess.Read);
-			using var texture = Texture2D.FromStream(Main.graphics.GraphicsDevice, file);
 
-			var colors = new Color[texture.Width];
-			texture.GetData(colors);
-			
-			return new Palette(colors);
+			var tex = default(Texture2D);
+
+			try {
+				ThreadUtilities.RunOnMainThreadAndWait(() => {
+					tex = Texture2D.FromStream(Main.graphics.GraphicsDevice, file);
+				});
+
+				var colors = new Color[tex!.Width * tex.Height];
+				tex.GetData(colors);
+
+				return new Palette(colors);
+			}
+			finally {
+				tex?.Dispose();
+				tex = null;
+			}
 		}
 		catch (FileNotFoundException) {
 			return default;
@@ -57,11 +70,33 @@ public static class PaletteIO {
 
 			using var file = new FileStream(handle, FileAccess.Read);
 
-			return Texture2D.FromStream(Main.graphics.GraphicsDevice, file);
+			var tex = default(Texture2D);
+
+			ThreadUtilities.RunOnMainThreadAndWait(() => {
+				tex = Texture2D.FromStream(Main.graphics.GraphicsDevice, file);
+			});
+
+			return tex;
 		}
 		catch (FileNotFoundException) {
 			return null;
 		}
+	}
+
+	public static Texture2D? LoadFromConfigAsTexture2DOrNullIfEmpty() {
+		var config = ModContent.GetInstance<PaletteConfig>();
+
+		if (config.Palettes.Count == 0)
+			return null;
+
+		var tex = default(Texture2D);
+
+		ThreadUtilities.RunOnMainThreadAndWait(() => {
+			tex = new Texture2D(Main.graphics.GraphicsDevice, config.Palettes.Count, 1);
+			tex.SetData(config.Palettes.ToArray());
+		});
+
+		return tex;
 	}
 
 	public static Texture2D SaveAndLoad(Palette palette, string path) {
@@ -73,10 +108,14 @@ public static class PaletteIO {
 
 		using var file = new FileStream(handle, FileAccess.Write);
 
-		var tex = new Texture2D(Main.graphics.GraphicsDevice, palette.Count, 1);
-		tex.SetData(palette.AsArray());
-		tex.SaveAsPng(file, palette.Count, 1);
+		var tex = default(Texture2D);
 
-		return tex;
+		ThreadUtilities.RunOnMainThreadAndWait(() => {
+			tex = new Texture2D(Main.graphics.GraphicsDevice, palette.Count, 1);
+			tex.SetData(palette.AsArray());
+			tex.SaveAsPng(file, palette.Count, 1);
+		});
+
+		return tex!;
 	}
 }

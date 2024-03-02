@@ -15,11 +15,10 @@
 //
 
 using AnyPaletteShader.Graphics;
-using AnyPaletteShader.Patches;
-using AnyPaletteShader.UI;
 using log4net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -43,13 +42,12 @@ public sealed class AnyPaletteShader : Mod {
 		if (Main.dedServ)
 			return;
 
-		UIAssets.Load();
-
-		ModSupport.Load();
+		PaletteShader.Instance = new(
+			shader: new Ref<Effect>(Assets.Request<Effect>("Effects/PaletteShader", AssetRequestMode.ImmediateLoad).Value),
+			passName: "FilterMyShader"
+		);
 
 		RenderTargets.Load();
-
-		AddPaletteConfigButtonIlPatch.Load();
 
 		PatchDrawing();
 	}
@@ -75,7 +73,7 @@ public sealed class AnyPaletteShader : Mod {
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
 
 			if (ApplyPaletteShader)
-				PaletteShader.Instance.Apply();
+				PaletteShader.Instance?.Apply();
 
 			Main.spriteBatch.Draw(RenderTargets.ScreenTarget, Vector2.Zero, Color.White);
 
@@ -87,10 +85,6 @@ public sealed class AnyPaletteShader : Mod {
 		// No need to manually unload drawing patches done in PatchDrawing; they should be undone by tML.
 
 		RenderTargets.Unload();
-
-		ModSupport.Unload();
-
-		UIAssets.Unload();
 
 		Instance = null!;
 	}
