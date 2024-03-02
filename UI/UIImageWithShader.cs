@@ -14,7 +14,6 @@
 //    limitations under the License.
 //
 
-using AnyPaletteShader.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria.GameContent.UI.Elements;
@@ -24,32 +23,30 @@ namespace AnyPaletteShader.UI;
 
 public sealed class UIImageWithShader : UIImage {
 	public ShaderData ShaderData { get; }
-	public bool ApplyShader { get; set; } = true;
+	public bool ApplyShader { get; set; }
 
 	public event ElementEvent? OnDraw;
 
 	public UIImageWithShader(Asset<Texture2D> texture, ShaderData shaderData) : base(texture) {
 		ShaderData = shaderData;
+
+		ApplyShader = true;
+		UseImmediateMode = true;
 	}
 
 	public UIImageWithShader(Texture2D nonReloadingTexture, ShaderData shaderData) : base(nonReloadingTexture) {
 		ShaderData = shaderData;
+
+		ApplyShader = true;
+		UseImmediateMode = true;
 	}
 
 	protected override void DrawSelf(SpriteBatch spriteBatch) {
-		if (ApplyShader) {
-			using (spriteBatch.UseBegin(sortMode: SpriteSortMode.Immediate)) {
-				OnDraw?.Invoke(this);
+		OnDraw?.Invoke(this);
 
-				ShaderData.Apply();
+		if (ApplyShader)
+			ShaderData.Apply();
 
-				base.DrawSelf(spriteBatch);
-			}
-		}
-		else {
-			OnDraw?.Invoke(this);
-
-			base.DrawSelf(spriteBatch);
-		}
+		base.DrawSelf(spriteBatch);
 	}
 }

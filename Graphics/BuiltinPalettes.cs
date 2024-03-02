@@ -15,21 +15,17 @@
 //
 
 using Microsoft.Xna.Framework;
-using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
 
 namespace AnyPaletteShader.Graphics;
 
-public readonly struct Palette(ImmutableArray<Color> colors) {
-	private readonly ImmutableArray<Color> colors = colors;
-
-	public int Count => colors.Length;
-
-	public Color this[int index] => colors[index];
-
-	public Color[] AsArray() {
-		var copyArray = colors;
-
-		return Unsafe.As<ImmutableArray<Color>, Color[]>(ref copyArray);
+public static class BuiltinPalettes {
+	public sealed class PastelBlue : BuiltinPalette {
+		protected override Color[] Colors => [
+			new Color(216, 225, 232),
+			new Color(198, 211, 227),
+			new Color(178, 203, 222),
+			new Color(152, 186, 213),
+			new Color(048, 070, 116),
+		];
 	}
 }

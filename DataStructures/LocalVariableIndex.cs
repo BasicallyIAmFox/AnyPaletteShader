@@ -14,23 +14,17 @@
 //    limitations under the License.
 //
 
-using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
+namespace AnyPaletteShader.DataStructures;
 
-namespace AnyPaletteShader.UI;
+public readonly struct LocalVariableIndex(uint index) {
+	private readonly uint index = index + 1;
 
-public static class PaletteConfig {
-	public static void OnPaletteConfigButtonMouseHover(out string text) {
-		text = AnyPaletteShader.Instance.GetLocalization("UI.PaletteConfigButton").Value;
+	public bool IsMissing => index == 0;
+
+	public LocalVariableIndex(int index) : this(checked(checked((uint)index) + 1)) {
 	}
 
-	public static void OnPaletteConfigButtonClick() {
-		SoundEngine.PlaySound(in SoundID.MenuOpen);
-
-		AnyPaletteShader.ApplyPaletteShader = false;
-
-		Main.menuMode = MenuID.FancyUI;
-		Main.MenuUI.SetState(UIPaletteConfig.Instance);
+	public int ToInt() {
+		return (int)index - 1;
 	}
 }

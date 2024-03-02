@@ -14,6 +14,7 @@
 //    limitations under the License.
 //
 
+using AnyPaletteShader.Extensions;
 using AnyPaletteShader.Utilities;
 using log4net;
 using Microsoft.Xna.Framework.Graphics;
@@ -24,6 +25,7 @@ using System.Runtime.CompilerServices;
 namespace AnyPaletteShader.UI;
 
 public static class UIAssets {
+	private static AssetRepository Assets => AnyPaletteShader.Instance.Assets;
 	private static ILog Log => AnyPaletteShader.Log;
 
 	public static Asset<Texture2D> ButtonAdd = null!;
@@ -32,7 +34,6 @@ public static class UIAssets {
 	public static Asset<Texture2D> ButtonTriangleUp = null!;
 	public static Asset<Texture2D> ButtonPaletteConfig = null!;
 	public static Asset<Texture2D> ButtonPaletteConfig2 = null!;
-
 	public static Asset<Texture2D> PalettePreview = null!;
 
 	internal static void Load() {
@@ -44,13 +45,12 @@ public static class UIAssets {
 		RequestTexture2DImmediateUI(out ButtonTriangleUp);
 		RequestTexture2DImmediateUI(out ButtonPaletteConfig);
 		RequestTexture2DImmediateUI(out ButtonPaletteConfig2);
-
 		RequestTexture2DImmediateUI(out PalettePreview);
 
 		return;
 
 		static void RequestTexture2DImmediateUI(out Asset<Texture2D> value, [CallerArgumentExpression(nameof(value))] string path = "") {
-			value = AnyPaletteShader.Instance.Assets.Request<Texture2D>($"Assets/UI/{path}", AssetRequestMode.ImmediateLoad);
+			value = Assets.RequestImmediate<Texture2D>($"Assets/UI/{path}");
 		}
 	}
 
@@ -61,7 +61,6 @@ public static class UIAssets {
 		DisposeAndNullify(ref ButtonTriangleUp!);
 		DisposeAndNullify(ref ButtonPaletteConfig!);
 		DisposeAndNullify(ref ButtonPaletteConfig2!);
-
 		DisposeAndNullify(ref PalettePreview!);
 
 		return;

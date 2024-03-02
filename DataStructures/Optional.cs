@@ -16,35 +16,65 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
-namespace AnyPaletteShader;
+namespace AnyPaletteShader.DataStructures;
 
-public readonly struct Optional<T>(T value) {
-	private readonly T value = value;
-	private readonly bool hasValue = true;
+public readonly struct Optional<T> {
+	// Fields
 
-	public bool HasValue => hasValue;
+	private readonly T value;
+	private readonly bool hasValue;
+
+	// Properties
 
 	public T Value {
 		get {
 			if (!hasValue)
-				throw new ArgumentException();
+				Throw();
 
 			return value;
+
+			[DoesNotReturn]
+			[MethodImpl(MethodImplOptions.NoInlining)]
+			static void Throw() {
+				throw new InvalidOperationException();
+			}
 		}
 	}
 
-	[return: MaybeNull]
-	public T GetValueOrDefault() {
+	public bool HasValue => hasValue;
+
+	// Constructors
+
+	public Optional() {
+		// This sets both `value` and `hasValue` to their default value,
+		// thus `hasValue` will always be `false`.
+		this = default;
+	}
+
+	public Optional(T value) {
+		this.value = value;
+		hasValue = true;
+	}
+
+	// Methods
+
+	public T? GetValueOrDefault() {
 		return hasValue ? value : default;
 	}
 
-	[return: MaybeNull]
-	public T GetValueOrDefault([MaybeNull] T defaultValue) {
+	public T? GetValueOrDefault(T defaultValue) {
 		return hasValue ? value : defaultValue;
 	}
 
+	// Conversions
+
 	public static implicit operator Optional<T>(T value) {
 		return new Optional<T>(value);
+	}
+
+	public static explicit operator T(Optional<T> value) {
+		return value.Value;
 	}
 }

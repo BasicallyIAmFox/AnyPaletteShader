@@ -20,9 +20,10 @@ namespace AnyPaletteShader;
 
 public static class ModSupport {
 	public const string ConciseModListName = "ConciseModList";
-	public static bool HasConciseModList => ConciseModList != null;
-	public static Mod? ConciseModList => _conciseModList;
+
 	private static Mod? _conciseModList;
+	public static Mod? ConciseModList => _conciseModList;
+	public static bool HasConciseModList => _conciseModList != null;
 
 	internal static void Load() {
 		ModLoader.TryGetMod(ConciseModListName, out _conciseModList);

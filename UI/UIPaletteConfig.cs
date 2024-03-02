@@ -34,20 +34,24 @@ public sealed class UIPaletteConfig : UIState {
 	internal static readonly UIPaletteConfig Instance = new();
 #endif
 
-	[MaybeNull] private UIElement main;
-	[MaybeNull] private UIPanel panel;
-	[MaybeNull] private UITextPanel<string> backButton;
+	private UIElement main = null!;
+	private UIPanel panel = null!;
+	private UITextPanel<string> backButton = null!;
+	private UITextPanel<string> saveButton = null!;
 
-	[MaybeNull] private UIPanel previewPanel;
-	[MaybeNull] private UIPanel previewInnerPanel;
-	[MaybeNull] private UIImageWithShader previewIcon;
+	private UIPanel palettePanel = null!;
+	private UIText paletteText = null!;
+
+	private UIPanel previewPanel = null!;
+	private UIPanel previewInnerPanel = null!;
+	private UIImageWithShader previewIcon = null!;
 
 	public override void OnInitialize() {
 		main = new UIElement {
 			Width           = StyleDimension.FromPercent         (       0.80f),
 			MaxWidth        = StyleDimension.FromPixels          (+600f       ),
-			Top             = StyleDimension.FromPixels          (+160f       ),
 			Height          = StyleDimension.FromPixelsAndPercent(-160f, 1.00f),
+			Top             = StyleDimension.FromPixels          (+160f       ),
 			HAlign          = 0.50f
 		};
 		Append(main);
@@ -60,30 +64,27 @@ public sealed class UIPaletteConfig : UIState {
 		};
 		main.Append(panel);
 
-		var palettePanel = new UIPanel {
+		InitializePalettePanel();
+
+		InitializePreviewPanel();
+
+		InitializeButtons();
+	}
+
+	private void InitializePalettePanel() {
+		palettePanel = new UIPanel {
 			Width           = StyleDimension.FromPixelsAndPercent(-162f, 1.00f),
 			Height          = StyleDimension.FromPixelsAndPercent(-1f  , 1.00f),
 			Top             = StyleDimension.FromPixels          (-1f         ),
 			BackgroundColor = UICommon.MainPanelBackground
 		};
-		panel.Append(palettePanel);
-		var paletteText = new UIText(AnyPaletteShader.Instance.GetLocalization("UI.PaletteConfigButton")) {
+
+		paletteText = new UIText(AnyPaletteShader.Instance.GetLocalization("UI.PaletteConfigButton")) {
 			HAlign          = 0.50f
 		};
+
+		panel.Append(palettePanel);
 		palettePanel.Append(paletteText);
-
-		InitializePreviewPanel();
-
-		backButton = new UITextPanel<string>(Language.GetTextValue("tModLoader.ModConfigBack")) {
-			Width           = StyleDimension.FromPixelsAndPercent(-10f, 0.50f),
-			Height          = StyleDimension.FromPixels          (+25f       ),
-			Top             = StyleDimension.FromPixels          (+20f       ),
-			HAlign          = 0.50f,
-			VAlign          = 0.70f
-		};
-		backButton.WithFadedMouseOver();
-		backButton.OnLeftClick += BackClick;
-		main.Append(backButton);
 	}
 
 	private void InitializePreviewPanel() {
@@ -95,7 +96,6 @@ public sealed class UIPaletteConfig : UIState {
 			BackgroundColor = UICommon.MainPanelBackground
 		};
 		previewPanel.SetPadding(5f);
-		panel!.Append(previewPanel);
 
 		// Preview Icon
 		previewInnerPanel = new UIPanel {
@@ -113,11 +113,40 @@ public sealed class UIPaletteConfig : UIState {
 			ScaleToFit      = true
 		};
 
-		previewPanel.Append(previewInnerPanel);
 		previewInnerPanel.Append(previewIcon);
+
+		panel!.Append(previewPanel);
+		previewPanel.Append(previewInnerPanel);
 	}
 
-	private static void BackClick(UIMouseEvent evt, UIElement listeningElement) {
+	private void InitializeButtons() {
+		backButton = new UITextPanel<string>(Language.GetTextValue("tModLoader.ModConfigBack")) {
+			Width           = StyleDimension.FromPixelsAndPercent(-10f, 0.49f),
+			Height          = StyleDimension.FromPixels          (+25f       ),
+			Top             = StyleDimension.FromPixels          (+20f       ),
+			HAlign          = 0.00f,
+			VAlign          = 0.70f
+		};
+		backButton.WithFadedMouseOver();
+		backButton.OnLeftClick += (_, _) => BackClick();
+
+		saveButton = new UITextPanel<string>("Save");
+		saveButton.CopyStyle(backButton);
+		saveButton.WithFadedMouseOver();
+		saveButton.HAlign = 1f;
+		saveButton.OnLeftClick += (_, _) => SaveClick();
+
+		main.Append(backButton);
+		main.Append(saveButton);
+	}
+
+	private static void SaveClick() {
+		//PaletteShader.Instance.UsePalette(default);
+
+		BackClick();
+	}
+
+	private static void BackClick() {
 		SoundEngine.PlaySound(in SoundID.MenuClose);
 
 		AnyPaletteShader.ApplyPaletteShader = true;

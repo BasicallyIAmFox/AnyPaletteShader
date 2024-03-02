@@ -15,6 +15,7 @@
 //
 
 using AnyPaletteShader.Graphics;
+using AnyPaletteShader.Patches;
 using AnyPaletteShader.UI;
 using log4net;
 using Microsoft.Xna.Framework;
@@ -26,6 +27,7 @@ namespace AnyPaletteShader;
 
 public sealed class AnyPaletteShader : Mod {
 	public static AnyPaletteShader Instance { get; private set; } = null!;
+
 	public static ILog Log => ModContent.GetInstance<AnyPaletteShader>().Logger;
 
 	/// <summary>
@@ -47,7 +49,7 @@ public sealed class AnyPaletteShader : Mod {
 
 		RenderTargets.Load();
 
-		PaletteConfig.Load();
+		AddPaletteConfigButtonIlPatch.Load();
 
 		PatchDrawing();
 	}
@@ -83,8 +85,6 @@ public sealed class AnyPaletteShader : Mod {
 
 	public override void Unload() {
 		// No need to manually unload drawing patches done in PatchDrawing; they should be undone by tML.
-
-		PaletteConfig.Unload();
 
 		RenderTargets.Unload();
 

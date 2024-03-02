@@ -14,19 +14,16 @@
 //    limitations under the License.
 //
 
+using AnyPaletteShader.DataStructures;
 using AnyPaletteShader.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.ComponentModel;
+using System;
 
-namespace AnyPaletteShader.Utilities;
+namespace AnyPaletteShader.Extensions;
 
-public static class SpriteBatchUtilities {
-	public static void Begin(this SpriteBatch spriteBatch, SpriteBatchSnapshot snapshot) {
-		spriteBatch.Begin(snapshot.SortMode, snapshot.BlendState, snapshot.SamplerState, snapshot.DepthStencilState, snapshot.RasterizerState, snapshot.Effect, snapshot.TransformMatrix);
-	}
-
+partial class SpriteBatchExtensions {
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public readonly struct Temporary_UseBegin : IDisposable {
 		private readonly SpriteBatch spriteBatch;

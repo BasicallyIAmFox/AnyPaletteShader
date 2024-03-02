@@ -14,23 +14,23 @@
 //    limitations under the License.
 //
 
-using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
+using AnyPaletteShader.DataStructures;
+using Microsoft.Xna.Framework;
+using Terraria.Localization;
+using Terraria.ModLoader;
 
-namespace AnyPaletteShader.UI;
+namespace AnyPaletteShader.Graphics;
 
-public static class PaletteConfig {
-	public static void OnPaletteConfigButtonMouseHover(out string text) {
-		text = AnyPaletteShader.Instance.GetLocalization("UI.PaletteConfigButton").Value;
-	}
+public abstract class BuiltinPalette : ModType, ILocalizedModType {
+	public LocalizedText DisplayName => this.GetLocalization(nameof(DisplayName));
 
-	public static void OnPaletteConfigButtonClick() {
-		SoundEngine.PlaySound(in SoundID.MenuOpen);
+	public string LocalizationCategory => nameof(BuiltinPalette);
 
-		AnyPaletteShader.ApplyPaletteShader = false;
+	public Palette Palette => new(Colors);
 
-		Main.menuMode = MenuID.FancyUI;
-		Main.MenuUI.SetState(UIPaletteConfig.Instance);
+	protected abstract Color[] Colors { get; }
+
+	protected sealed override void Register() {
+		ModTypeLookup<BuiltinPalette>.Register(this);
 	}
 }

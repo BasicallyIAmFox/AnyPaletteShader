@@ -30,15 +30,16 @@ public static class RenderTargets {
 		ThreadUtilities.RunOnMainThreadAndWait(static () => {
 			ScreenTarget = new ScreenRenderTarget(Main.graphics.GraphicsDevice);
 
-			Log.Info($"Initialized {nameof(ScreenTarget)}");
+			Log.Info("Initialized render targets");
 		});
 	}
 
 	public static void Unload() {
 		if (ScreenTarget != null) {
-			ThreadUtilities.RunOnMainThreadAndWait(ScreenTarget.Dispose);
-
-			ScreenTarget = null!;
+			ThreadUtilities.RunOnMainThreadAndWait(static () => {
+				ScreenTarget.Dispose();
+				ScreenTarget = null!;
+			});
 		}
 	}
 }

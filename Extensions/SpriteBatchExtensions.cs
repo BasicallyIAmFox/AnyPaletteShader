@@ -14,23 +14,13 @@
 //    limitations under the License.
 //
 
-using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
+using AnyPaletteShader.Graphics;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace AnyPaletteShader.UI;
+namespace AnyPaletteShader.Extensions;
 
-public static class PaletteConfig {
-	public static void OnPaletteConfigButtonMouseHover(out string text) {
-		text = AnyPaletteShader.Instance.GetLocalization("UI.PaletteConfigButton").Value;
-	}
-
-	public static void OnPaletteConfigButtonClick() {
-		SoundEngine.PlaySound(in SoundID.MenuOpen);
-
-		AnyPaletteShader.ApplyPaletteShader = false;
-
-		Main.menuMode = MenuID.FancyUI;
-		Main.MenuUI.SetState(UIPaletteConfig.Instance);
+public static partial class SpriteBatchExtensions {
+	public static void Begin(this SpriteBatch spriteBatch, SpriteBatchSnapshot snapshot) {
+		spriteBatch.Begin(snapshot.SortMode, snapshot.BlendState, snapshot.SamplerState, snapshot.DepthStencilState, snapshot.RasterizerState, snapshot.Effect, snapshot.TransformMatrix);
 	}
 }

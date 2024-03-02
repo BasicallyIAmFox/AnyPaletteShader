@@ -14,23 +14,12 @@
 //    limitations under the License.
 //
 
-using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
+using ReLogic.Content;
 
-namespace AnyPaletteShader.UI;
+namespace AnyPaletteShader.Extensions;
 
-public static class PaletteConfig {
-	public static void OnPaletteConfigButtonMouseHover(out string text) {
-		text = AnyPaletteShader.Instance.GetLocalization("UI.PaletteConfigButton").Value;
-	}
-
-	public static void OnPaletteConfigButtonClick() {
-		SoundEngine.PlaySound(in SoundID.MenuOpen);
-
-		AnyPaletteShader.ApplyPaletteShader = false;
-
-		Main.menuMode = MenuID.FancyUI;
-		Main.MenuUI.SetState(UIPaletteConfig.Instance);
+public static class AssetRepositoryExtensions {
+	public static Asset<T> RequestImmediate<T>(this AssetRepository assetRepository, string assetName) where T : class {
+		return assetRepository.Request<T>(assetName, AssetRequestMode.ImmediateLoad);
 	}
 }

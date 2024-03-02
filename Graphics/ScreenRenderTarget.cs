@@ -57,17 +57,21 @@ public sealed class ScreenRenderTarget : RenderTarget2D {
 		var parameters = senderGd.PresentationParameters;
 
 		DisposeTexture();
-		ReInit(parameters.BackBufferWidth, parameters.BackBufferHeight);
+		InitializeTexture(parameters.BackBufferWidth, parameters.BackBufferHeight);
 
 		return;
 
 		void DisposeTexture() {
+			// Copy pasted from Texture.Dispose
+
 			TextureCollection__RemoveDisposedTexture(GraphicsDevice.Textures, this);
 			TextureCollection__RemoveDisposedTexture(GraphicsDevice.VertexTextures, this);
 			FNA3D.FNA3D_AddDisposeTexture(GraphicsDevice__GLDevice(GraphicsDevice), Texture__texture(this));
 		}
 
-		void ReInit(int width, int height) {
+		void InitializeTexture(int width, int height) {
+			// Copy pasted from Texture2D constructor
+
 			Texture2D__set_Width(this, width);
 			Texture2D__set_Height(this, height);
 			LevelCount = MipMap ? Texture__CalculateMipLevels(width, height, 0) : 1;
@@ -79,8 +83,8 @@ public sealed class ScreenRenderTarget : RenderTarget2D {
 		[UnsafeAccessor(UnsafeAccessorKind.Field, Name = "GLDevice")]
 		extern static ref IntPtr GraphicsDevice__GLDevice(GraphicsDevice self);
 		
-		[UnsafeAccessor(UnsafeAccessorKind.StaticMethod, Name = "CalculateMipMapLevels")]
-		extern static int Texture__CalculateMipMapLevels(Texture? self, int width, int height = 0, int depth = 0);
+		[UnsafeAccessor(UnsafeAccessorKind.StaticMethod, Name = "CalculateMipLevels")]
+		extern static int Texture__CalculateMipLevels(Texture? self, int width, int height = 0, int depth = 0);
 		
 		[UnsafeAccessor(UnsafeAccessorKind.Field, Name = "texture")]
 		extern static ref IntPtr Texture__texture(Texture self);
@@ -100,6 +104,7 @@ public sealed class ScreenRenderTarget : RenderTarget2D {
 		if (!IsDisposed)
 			Main.graphics.GraphicsDevice.DeviceReset -= OnDeviceReset;
 
+		// `IsDisposed` is set in base call.
 		base.Dispose(disposing);
 	}
 }

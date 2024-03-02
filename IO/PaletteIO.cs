@@ -14,7 +14,8 @@
 //    limitations under the License.
 //
 
-using AnyPaletteShader.Graphics;
+using AnyPaletteShader.DataStructures;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
@@ -22,12 +23,34 @@ using Terraria;
 namespace AnyPaletteShader.IO;
 
 public static class PaletteIO {
-	private static string PalettePath => Path.Combine(Main.SavePath, nameof(AnyPaletteShader), "Palette.png");
+	public static string PalettePath => Path.Combine(Main.SavePath, nameof(AnyPaletteShader), "Palette.png");
+	public static string PreviewPath => Path.Combine(Main.SavePath, nameof(AnyPaletteShader), "Preview.png");
 
-	public static Texture2D? LoadAsTexture2D() {
+	public static Palette LoadAsPalette(string path) {
 		try {
 			using var handle = File.OpenHandle(
-				path: PalettePath,
+				path: path,
+				mode: FileMode.Open,
+				access: FileAccess.Read
+			);
+
+			using var file = new FileStream(handle, FileAccess.Read);
+			using var texture = Texture2D.FromStream(Main.graphics.GraphicsDevice, file);
+
+			var colors = new Color[texture.Width];
+			texture.GetData(colors);
+			
+			return new Palette(colors);
+		}
+		catch (FileNotFoundException) {
+			return default;
+		}
+	}
+	
+	public static Texture2D? LoadAsTexture2D(string path) {
+		try {
+			using var handle = File.OpenHandle(
+				path: path,
 				mode: FileMode.Open,
 				access: FileAccess.Read
 			);
@@ -41,9 +64,9 @@ public static class PaletteIO {
 		}
 	}
 
-	public static Texture2D SaveAndLoad(Palette palette) {
+	public static Texture2D SaveAndLoad(Palette palette, string path) {
 		using var handle = File.OpenHandle(
-			path: PalettePath,
+			path: path,
 			mode: FileMode.Create,
 			access: FileAccess.Write
 		);

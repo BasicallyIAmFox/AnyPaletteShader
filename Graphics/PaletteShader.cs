@@ -14,6 +14,7 @@
 //    limitations under the License.
 //
 
+using AnyPaletteShader.DataStructures;
 using AnyPaletteShader.IO;
 using AnyPaletteShader.Utilities;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,14 +33,14 @@ public sealed class PaletteShader : ShaderData {
 	private Texture2D? palTex;
 
 	private PaletteShader(Ref<Effect> shader, string passName) : base(shader, passName) {
-		palTex = PaletteIO.LoadAsTexture2D();
+		palTex = PaletteIO.LoadAsTexture2D(PaletteIO.PalettePath);
 	}
 
 	public PaletteShader UsePalette(Palette palette) {
 		ThreadUtilities.RunOnMainThreadAndWait(() => {
 			palTex?.Dispose();
 
-			palTex = PaletteIO.SaveAndLoad(palette);
+			palTex = PaletteIO.SaveAndLoad(palette, PaletteIO.PalettePath);
 		});
 
 		return this;
@@ -51,8 +52,9 @@ public sealed class PaletteShader : ShaderData {
 			Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
 			Shader.Parameters["palWid"].SetValue(palTex.Width);
 		}
-		else
+		else {
 			Shader.Parameters["palWid"].SetValue(0);
+		}
 
 		base.Apply();
 	}

@@ -45,6 +45,8 @@ public readonly struct SpriteBatchSnapshot {
 		TransformMatrix = SpriteBatch__transformMatrix(spriteBatch);
 
 #if NET8_0_OR_GREATER
+		return;
+
 		[UnsafeAccessor(UnsafeAccessorKind.Field, Name = "sortMode")]
 		extern static ref SpriteSortMode SpriteBatch__sortMode(SpriteBatch self);
 

@@ -14,23 +14,25 @@
 //    limitations under the License.
 //
 
-using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 
-namespace AnyPaletteShader.UI;
+namespace AnyPaletteShader.DataStructures;
 
-public static class PaletteConfig {
-	public static void OnPaletteConfigButtonMouseHover(out string text) {
-		text = AnyPaletteShader.Instance.GetLocalization("UI.PaletteConfigButton").Value;
+public readonly struct Palette(ImmutableArray<Color> colors) {
+	private readonly ImmutableArray<Color> colors = colors;
+
+	public int Count => colors.Length;
+
+	public Palette(IEnumerable<Color> colors) : this(colors.ToImmutableArray()) {
 	}
 
-	public static void OnPaletteConfigButtonClick() {
-		SoundEngine.PlaySound(in SoundID.MenuOpen);
+	public Color[] AsArray() {
+		var copyArray = colors;
 
-		AnyPaletteShader.ApplyPaletteShader = false;
-
-		Main.menuMode = MenuID.FancyUI;
-		Main.MenuUI.SetState(UIPaletteConfig.Instance);
+		// This is safe behaviour, as `ImmutableArray<T>` has same layout as `T[]`
+		return Unsafe.As<ImmutableArray<Color>, Color[]>(ref copyArray);
 	}
 }

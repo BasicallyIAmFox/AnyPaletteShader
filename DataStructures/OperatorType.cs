@@ -14,23 +14,35 @@
 //    limitations under the License.
 //
 
-using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
+namespace AnyPaletteShader.DataStructures;
 
-namespace AnyPaletteShader.UI;
+// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/operator-overloading#overloadable-operators
+public enum OperatorType {
+	UnaryPlus,
+	UnaryNegation,
+	LogicalNot,
+	OnesComplement,
+	Increment,
+	Decrement,
+	True,
+	False,
 
-public static class PaletteConfig {
-	public static void OnPaletteConfigButtonMouseHover(out string text) {
-		text = AnyPaletteShader.Instance.GetLocalization("UI.PaletteConfigButton").Value;
-	}
+	Addition,
+	Subtraction,
+	Multiply,
+	Division,
+	Modulus,
+	BitwiseAnd,
+	BitwiseOr,
+	ExclusiveOr,
+	LeftShift,
+	RightShift,
+	UnsignedRightShift,
 
-	public static void OnPaletteConfigButtonClick() {
-		SoundEngine.PlaySound(in SoundID.MenuOpen);
-
-		AnyPaletteShader.ApplyPaletteShader = false;
-
-		Main.menuMode = MenuID.FancyUI;
-		Main.MenuUI.SetState(UIPaletteConfig.Instance);
-	}
+	Equality,
+	Inequality,
+	LessThan,
+	GreaterThan,
+	LessThanOrEqual,
+	GreaterThanOrEqual,
 }
