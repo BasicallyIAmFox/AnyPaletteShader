@@ -1,6 +1,0 @@
-[h1][url=https://github.com/BasicallyIAmFox/AnyPaletteShader]Github[/url][/h1]
-
-Palette Shader mod allows to make your world use specific colors instead of default colors!
-
-Credits:
-- Lion8cake: mod icon

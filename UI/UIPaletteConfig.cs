@@ -1,0 +1,156 @@
+﻿//
+//    Copyright 2023-2024 BasicallyIAmFox
+//
+//    Licensed under the Apache License, Version 2.0 (the "License")
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//
+//        http://www.apache.org/licenses/LICENSE-2.0
+//
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+
+using AnyPaletteShader.Graphics;
+using System.Diagnostics.CodeAnalysis;
+using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent.UI.Elements;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader.UI;
+using Terraria.UI;
+
+namespace AnyPaletteShader.UI;
+
+public sealed class UIPaletteConfig : UIState {
+#if DEBUG
+	// Just so we can debug it easily.
+	internal static UIPaletteConfig Instance => new();
+#else
+	internal static readonly UIPaletteConfig Instance = new();
+#endif
+
+	private UIElement main = null!;
+	private UIPanel panel = null!;
+	private UITextPanel<string> backButton = null!;
+	private UITextPanel<string> saveButton = null!;
+
+	private UIPanel palettePanel = null!;
+	private UIText paletteText = null!;
+
+	private UIPanel previewPanel = null!;
+	private UIPanel previewInnerPanel = null!;
+	private UIImageWithShader previewIcon = null!;
+
+	public override void OnInitialize() {
+		main = new UIElement {
+			Width           = StyleDimension.FromPercent         (       0.80f),
+			MaxWidth        = StyleDimension.FromPixels          (+600f       ),
+			Height          = StyleDimension.FromPixelsAndPercent(-160f, 1.00f),
+			Top             = StyleDimension.FromPixels          (+160f       ),
+			HAlign          = 0.50f
+		};
+		Append(main);
+
+		panel = new UIPanel {
+			Width           = StyleDimension.FromPercent         (       1.00f),
+			Height          = StyleDimension.FromPixelsAndPercent(-160f, 0.80f),
+			Top             = StyleDimension.FromPixels          (+80f        ),
+			BackgroundColor = UICommon.MainPanelBackground
+		};
+		main.Append(panel);
+
+		InitializePalettePanel();
+
+		InitializePreviewPanel();
+
+		InitializeButtons();
+	}
+
+	private void InitializePalettePanel() {
+		palettePanel = new UIPanel {
+			Width           = StyleDimension.FromPixelsAndPercent(-162f, 1.00f),
+			Height          = StyleDimension.FromPixelsAndPercent(-1f  , 1.00f),
+			Top             = StyleDimension.FromPixels          (-1f         ),
+			BackgroundColor = UICommon.MainPanelBackground
+		};
+
+		paletteText = new UIText(AnyPaletteShader.Instance.GetLocalization("UI.PaletteConfigButton")) {
+			HAlign          = 0.50f
+		};
+
+		panel.Append(palettePanel);
+		palettePanel.Append(paletteText);
+	}
+
+	private void InitializePreviewPanel() {
+		previewPanel = new UIPanel {
+			Width           = StyleDimension.FromPixels          (+158f       ),
+			Height          = StyleDimension.FromPixelsAndPercent(-1f  , 1.00f),
+			Top             = StyleDimension.FromPixels          (-1f         ),
+			HAlign          = 1.00f,
+			BackgroundColor = UICommon.MainPanelBackground
+		};
+		previewPanel.SetPadding(5f);
+
+		// Preview Icon
+		previewInnerPanel = new UIPanel {
+			Width           = StyleDimension.FromPercent         (       1.00f),
+			Height          = StyleDimension.FromPercent         (       1.00f),
+			MaxWidth        = StyleDimension.FromPixels          (+160f       ),
+			MaxHeight       = StyleDimension.FromPixels          (+150f       ),
+			BackgroundColor = UICommon.DefaultUIBlue * 0.5f
+		};
+		previewInnerPanel.SetPadding(6f);
+
+		previewIcon = new UIImageWithShader(UIAssets.PalettePreview, PaletteShader.Instance) {
+			Width           = StyleDimension.FromPercent         (       1.00f),
+			Height          = StyleDimension.FromPercent         (       1.00f),
+			ScaleToFit      = true
+		};
+
+		previewInnerPanel.Append(previewIcon);
+
+		panel!.Append(previewPanel);
+		previewPanel.Append(previewInnerPanel);
+	}
+
+	private void InitializeButtons() {
+		backButton = new UITextPanel<string>(Language.GetTextValue("tModLoader.ModConfigBack")) {
+			Width           = StyleDimension.FromPixelsAndPercent(-10f, 0.49f),
+			Height          = StyleDimension.FromPixels          (+25f       ),
+			Top             = StyleDimension.FromPixels          (+20f       ),
+			HAlign          = 0.00f,
+			VAlign          = 0.70f
+		};
+		backButton.WithFadedMouseOver();
+		backButton.OnLeftClick += (_, _) => BackClick();
+
+		saveButton = new UITextPanel<string>("Save");
+		saveButton.CopyStyle(backButton);
+		saveButton.WithFadedMouseOver();
+		saveButton.HAlign = 1f;
+		saveButton.OnLeftClick += (_, _) => SaveClick();
+
+		main.Append(backButton);
+		main.Append(saveButton);
+	}
+
+	private static void SaveClick() {
+		//PaletteShader.Instance.UsePalette(default);
+
+		BackClick();
+	}
+
+	private static void BackClick() {
+		SoundEngine.PlaySound(in SoundID.MenuClose);
+
+		AnyPaletteShader.ApplyPaletteShader = true;
+
+		Main.menuMode = Interface.modsMenuID;
+	}
+}

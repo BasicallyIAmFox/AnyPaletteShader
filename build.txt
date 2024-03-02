@@ -7,4 +7,6 @@ hideResources = false
 includeSource = false
 side = Client
 
+weakReferences = ConciseModList@1.3.3
+
 buildIgnore = .gitignore, .editorconfig, .idea/*, .vs/*, bin/*, obj/*, *.csproj, *.sln, *.sln.DotSettings, Assets/concept.png, Assets/Cursed.png, Effects/*.fx, Effects/fxcompiler.exe, Effects/Microsoft.Xna.Framework.Content.Pipeline.dll, Effects/Microsoft.Xna.Framework.Content.Pipeline.EffectImporter.dll
