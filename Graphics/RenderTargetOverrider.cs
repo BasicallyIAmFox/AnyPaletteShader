@@ -41,6 +41,7 @@ public sealed class RenderTargetOverrider {
 		return new OverrideDefaultRenderTarget(value);
 	}
 
+	// TODO: Should this rather be in class constructor?
 	internal static void Patch() {
 		var setRenderTargetsMethodInfo = typeof(GraphicsDevice).GetRuntimeMethod(nameof(GraphicsDevice.SetRenderTarget), [ typeof(RenderTarget2D) ]);
 
