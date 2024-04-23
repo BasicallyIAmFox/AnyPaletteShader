@@ -33,7 +33,13 @@ jobs:
 
     - name: Copy shaders compiler
       run: |
-        echo 'No way!'
+        cd ..
+        set global_folder=%cd%
+
+        cd AnyPaletteShader/.github
+        xcopy /Y %__cd__%fxc.exe %global_folder%
+
+        cd ..
     
     - name: Build
       run: dotnet build AnyPaletteShader.sln
