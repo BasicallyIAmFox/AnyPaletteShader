@@ -37,8 +37,8 @@ jobs:
     - name: Copy shaders compiler
       run: |
         cd ..
-        echo !cd!
-        xcopy "AnyPaletteShader\.github\fxc.exe" "%cd%" /Y /D
+        echo "$cd"
+        xcopy "AnyPaletteShader\.github\fxc.exe" "$cd" /Y /D
     
     - name: Build
       run: dotnet build AnyPaletteShader.sln
