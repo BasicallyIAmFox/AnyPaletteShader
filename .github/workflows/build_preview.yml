@@ -33,7 +33,7 @@ jobs:
 
     - name: Copy shaders compiler
       run: |
-        f:\Catrose\fxc.exe
+        echo 'No way!'
     
     - name: Build
       run: dotnet build AnyPaletteShader.sln
