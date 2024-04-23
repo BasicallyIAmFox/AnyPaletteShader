@@ -24,11 +24,15 @@ jobs:
     
     - name: Create tModLoader.targets
       run: |
+        @echo off
+
         cd ..
         echo ^<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"^>^<Import Project="tmod/tMLMod.targets" /^>^</Project^> > tModLoader.targets
 
         cd ..
         echo %cd%
+
+        @echo on
     
     - name: Build
       run: dotnet build AnyPaletteShader.sln
