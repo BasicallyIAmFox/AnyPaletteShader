@@ -25,7 +25,12 @@ jobs:
     - name: Create tModLoader.targets
       run: |
         cd ..
-        echo <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"><Import Project="tmod/tMLMod.targets" /></Project> > tModLoader.targets
+        echo '' > tModLoader.targets
+        
+        echo '<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">' >> tModLoader.targets
+        echo '  <Import Project="tmod/tMLMod.targets" />                                               ' >> tModLoader.targets
+        echo '</Project>                                                                               ' >> tModLoader.targets
+
         type tModLoader.targets
         cd ..
     
