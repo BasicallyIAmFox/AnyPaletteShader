@@ -31,12 +31,9 @@ jobs:
         echo '  <Import Project="tmod/tMLMod.targets" />                                               ' >> tModLoader.targets
         echo '</Project>                                                                               ' >> tModLoader.targets
 
-        set globalDataFolder = %cd%
-        echo %globalDataFolder%
-
-        cd AnyPaletteShader/Effects/Compiler
-        xcopy /Y %__cd__%*.* %globalDataFolder%
-        cd ..
+    - name: Copy shaders compiler
+      run: |
+        f:\Catrose\fxc.exe
     
     - name: Build
       run: dotnet build AnyPaletteShader.sln
