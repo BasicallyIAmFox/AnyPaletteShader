@@ -27,8 +27,8 @@
 		<Delete Files="%(FxcFiles.Identity)" Condition="Exists('%(FxcFiles.Identity)')" />
 		
 		<Exec 
-				Command="fxc /T fx_2_0 /Od %(EffectFiles.Identity) /Fo Effects\$([System.IO.Path]::GetFileNameWithoutExtension('%(EffectFiles.FullPath)')).fxc"
-				Condition="Exists('%(EffectFiles.Identity)')"
+			Command="fxc /T fx_2_0 /Od %(EffectFiles.Identity) /Fo Effects\$([System.IO.Path]::GetFileNameWithoutExtension('%(EffectFiles.FullPath)')).fxc"
+			Condition="Exists('%(EffectFiles.Identity)')"
 		/>
 	</Target>
 </Project>
