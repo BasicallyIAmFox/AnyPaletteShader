@@ -24,6 +24,6 @@ public static class ThreadUtilities {
 		if (Program.IsMainThread)
 			action();
 		else
-			Main.RunOnMainThread(action).GetAwaiter().GetResult();
+			Main.QueueMainThreadAction(action);
 	}
 }

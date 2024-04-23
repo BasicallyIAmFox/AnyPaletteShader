@@ -18,39 +18,40 @@ using AnyPaletteShader.DataStructures;
 using AnyPaletteShader.IO;
 using AnyPaletteShader.Utilities;
 using Microsoft.Xna.Framework.Graphics;
-using System.Diagnostics.CodeAnalysis;
 using Terraria;
 using Terraria.Graphics.Shaders;
 
 namespace AnyPaletteShader.Graphics;
 
-public sealed class PaletteShader : ShaderData {
-	[MaybeNull] public static PaletteShader Instance { get; internal set; }
+public sealed class PaletteShaderData : ShaderData {
+	public static PaletteShaderData Instance { get; private set; } = new PaletteShaderData();
 
-	private Texture2D? palTex;
+	private const string PassName = "FilterMyShader";
+	private const string PaletteWidthShaderParameter = "palWid";
 
-	internal PaletteShader(Ref<Effect> shader, string passName) : base(shader, passName) {
-		palTex = PaletteIO.LoadFromConfigAsTexture2DOrNullIfEmpty();
+	private Texture2D? _palTex;
+
+	private PaletteShaderData() : base(AnyPaletteShader.Instance.Assets.Request<Effect>("Effects/PaletteShader"), PassName) {
+		_palTex = PaletteIO.LoadFromConfigAsTexture2D();
 	}
 
-	public PaletteShader UsePalette(Palette palette) {
+	public void UsePalette(Palette palette) {
 		ThreadUtilities.RunOnMainThreadAndWait(() => {
-			palTex?.Dispose();
-
-			palTex = PaletteIO.SaveAndLoad(palette, PaletteIO.PalettePath);
+			_palTex?.Dispose();
+			
+			_palTex = PaletteIO.Save(palette, PaletteIO.PalettePath);
 		});
-
-		return this;
 	}
 
 	public override void Apply() {
-		if (palTex != null) {
-			Main.graphics.GraphicsDevice.Textures[1] = palTex;
+		if (_palTex != null) {
+			Main.graphics.GraphicsDevice.Textures[1] = _palTex;
 			Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
-			Shader.Parameters["palWid"].SetValue(palTex.Width);
+
+			Shader.Parameters[PaletteWidthShaderParameter].SetValue(_palTex.Width);
 		}
 		else {
-			Shader.Parameters["palWid"].SetValue(0);
+			Shader.Parameters[PaletteWidthShaderParameter].SetValue(0);
 		}
 
 		base.Apply();

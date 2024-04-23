@@ -18,7 +18,10 @@ using AnyPaletteShader.DataStructures;
 using AnyPaletteShader.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -27,95 +30,92 @@ namespace AnyPaletteShader.IO;
 public static class PaletteIO {
 	public static string PalettePath => Path.Combine(Main.SavePath, nameof(AnyPaletteShader), "Palette.png");
 	public static string PreviewPath => Path.Combine(Main.SavePath, nameof(AnyPaletteShader), "Preview.png");
-
-	public static Palette LoadAsPalette(string path) {
-		try {
-			using var handle = File.OpenHandle(
-				path: path,
-				mode: FileMode.Open,
-				access: FileAccess.Read
-			);
-
-			using var file = new FileStream(handle, FileAccess.Read);
-
-			var tex = default(Texture2D);
-
-			try {
-				ThreadUtilities.RunOnMainThreadAndWait(() => {
-					tex = Texture2D.FromStream(Main.graphics.GraphicsDevice, file);
-				});
-
-				var colors = new Color[tex!.Width * tex.Height];
-				tex.GetData(colors);
-
-				return new Palette(colors);
-			}
-			finally {
-				tex?.Dispose();
-				tex = null;
-			}
-		}
-		catch (FileNotFoundException) {
-			return default;
-		}
-	}
 	
-	public static Texture2D? LoadAsTexture2D(string path) {
+	public static bool LoadAsTexture2D(string path, [NotNullWhen(true)] out Texture2D? texture) {
 		try {
-			using var handle = File.OpenHandle(
-				path: path,
-				mode: FileMode.Open,
-				access: FileAccess.Read
-			);
-
+			Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+			
+			using var handle = File.OpenHandle(path, mode: FileMode.Open, access: FileAccess.Read);
 			using var file = new FileStream(handle, FileAccess.Read);
-
+			
 			var tex = default(Texture2D);
-
+			
 			ThreadUtilities.RunOnMainThreadAndWait(() => {
+				// ReSharper disable once AccessToDisposedClosure
 				tex = Texture2D.FromStream(Main.graphics.GraphicsDevice, file);
 			});
-
-			return tex;
+			
+			Debug.Assert(tex != null);
+			
+			texture = tex;
+			return true;
 		}
 		catch (FileNotFoundException) {
-			return null;
 		}
+		
+		texture = default;
+		return false;
 	}
-
-	public static Texture2D? LoadFromConfigAsTexture2DOrNullIfEmpty() {
+	
+	public static bool LoadAsPalette(string path, out Palette palette) {
+		if (LoadAsTexture2D(path, out var tex)) {
+			var colors = new Color[tex.Width * tex.Height];
+			
+			ThreadUtilities.RunOnMainThreadAndWait(() => {
+				tex.GetData(colors);
+				tex.Dispose();
+			});
+			
+			palette = new Palette(colors);
+			return true;
+		}
+		
+		palette = default;
+		return false;
+	}
+	
+	public static Texture2D? LoadFromConfigAsTexture2D() {
 		var config = ModContent.GetInstance<PaletteConfig>();
-
-		if (config.Palettes.Count == 0)
-			return null;
-
-		var tex = default(Texture2D);
-
-		ThreadUtilities.RunOnMainThreadAndWait(() => {
-			tex = new Texture2D(Main.graphics.GraphicsDevice, config.Palettes.Count, 1);
-			tex.SetData(config.Palettes.ToArray());
-		});
-
-		return tex;
+		
+		if (config is { Palettes: { Count: > 0 } palettes }) {
+			var tex = default(Texture2D);
+			
+			ThreadUtilities.RunOnMainThreadAndWait(() => {
+				tex = new Texture2D(Main.graphics.GraphicsDevice, palettes.Count, 1);
+				tex.SetData(palettes.ToArray());
+			});
+			
+			Debug.Assert(tex != null);
+			
+			return tex;
+		}
+		
+		return null;
 	}
-
-	public static Texture2D SaveAndLoad(Palette palette, string path) {
-		using var handle = File.OpenHandle(
-			path: path,
-			mode: FileMode.Create,
-			access: FileAccess.Write
-		);
-
+	
+	public static Texture2D Save(Palette palette, string path) {
+		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+		
+		using var handle = File.OpenHandle(path, mode: FileMode.Create, access: FileAccess.Write);
 		using var file = new FileStream(handle, FileAccess.Write);
-
+		
 		var tex = default(Texture2D);
-
+		
+		// This is safe.
+		// `ImmutableArray<T>` is explicitly just a `T[]` under the hood.
+		// `Palette` struct is always expected to be just one `ImmutableArray<Color>`.
+		var paletteColors = Unsafe.As<Palette, Color[]>(ref palette);
+		
 		ThreadUtilities.RunOnMainThreadAndWait(() => {
 			tex = new Texture2D(Main.graphics.GraphicsDevice, palette.Count, 1);
-			tex.SetData(palette.AsArray());
+			tex.SetData(paletteColors);
+			
+			// ReSharper disable once AccessToDisposedClosure
 			tex.SaveAsPng(file, palette.Count, 1);
 		});
-
-		return tex!;
+		
+		Debug.Assert(tex != null);
+		
+		return tex;
 	}
 }

@@ -14,10 +14,10 @@
 //    limitations under the License.
 //
 
-using AnyPaletteShader.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.ComponentModel;
+using System.Reflection;
 using Terraria.ModLoader;
 
 namespace AnyPaletteShader.Graphics;
@@ -25,7 +25,7 @@ namespace AnyPaletteShader.Graphics;
 public sealed class RenderTargetOverrider {
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public readonly struct OverrideDefaultRenderTarget : IDisposable {
-		public OverrideDefaultRenderTarget(RenderTarget2D value) {
+		public OverrideDefaultRenderTarget(RenderTarget2D? value) {
 			_overrideDefaultValue = value;
 		}
 
@@ -36,13 +36,12 @@ public sealed class RenderTargetOverrider {
 
 	private static RenderTarget2D? _overrideDefaultValue;
 
-	public static OverrideDefaultRenderTarget OverrideDefault(RenderTarget2D value) {
+	public static OverrideDefaultRenderTarget OverrideDefault(RenderTarget2D? value) {
 		return new OverrideDefaultRenderTarget(value);
 	}
 
 	internal static void Patch() {
-		var setRenderTargetsMethodInfo = typeof(GraphicsDevice)
-			.GetMethod(nameof(GraphicsDevice.SetRenderTarget), ReflectionUtilities.InstancePublic, [typeof(RenderTarget2D)])!;
+		var setRenderTargetsMethodInfo = typeof(GraphicsDevice).GetRuntimeMethod(nameof(GraphicsDevice.SetRenderTarget), [typeof(RenderTarget2D)])!;
 
 		MonoModHooks.Add(setRenderTargetsMethodInfo, (Action<GraphicsDevice, RenderTarget2D?> orig, GraphicsDevice self, RenderTarget2D? renderTarget) => {
 			// renderTarget is null whenever it tries to set to 'draw to screen' thing.

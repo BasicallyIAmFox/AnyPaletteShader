@@ -29,31 +29,30 @@ namespace AnyPaletteShader;
 // TODO: Replace this with actual UI
 public sealed class PaletteConfig : ModConfig {
 	public override ConfigScope Mode => ConfigScope.ClientSide;
-
+	
+	// ReSharper disable UnassignedField.Global
+	
 	[DefaultValue(true)]
 	public bool ApplyFilter;
 
 	[DefaultListValue(typeof(Color), "255, 255, 255, 255")]
 	public List<Color> Palettes = [];
-
+	
+	// ReSharper restore UnassignedField.Global
+	
 	public override void OnChanged() {
 		var comparer = new ColorByPercentComparer(0.3f, 0.59f, 0.11f);
-
+		
 		AnyPaletteShader.ApplyPaletteShader = ApplyFilter;
-
+		
 		{
 			Palettes = [.. Palettes.ToImmutableSortedSet(comparer)];
 
 			// Do not allow 1 color in palette to prevent soft-locks.
-			if (Palettes.Count == 1) {
-				return;
-			}
-
-			// Why `OnChanged` is even triggered before mod loading?
-			if (PaletteShader.Instance == null)
+			if (Palettes.Count == 1)
 				return;
 
-			PaletteShader.Instance.UsePalette(new Palette(Palettes));
+			PaletteShaderData.Instance.UsePalette(new Palette(Palettes));
 		}
 	}
 }

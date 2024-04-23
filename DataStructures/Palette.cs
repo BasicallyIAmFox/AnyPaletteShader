@@ -21,18 +21,19 @@ using System.Runtime.CompilerServices;
 
 namespace AnyPaletteShader.DataStructures;
 
-public readonly struct Palette(ImmutableArray<Color> colors) {
-	private readonly ImmutableArray<Color> colors = colors;
-
-	public int Count => colors.Length;
-
-	public Palette(IEnumerable<Color> colors) : this(colors.ToImmutableArray()) {
+/// <summary>Represents array of colors.</summary>
+/// <seealso cref="Color"/>
+public readonly struct Palette {
+	// Do not add more fields.
+	private readonly ImmutableArray<Color> _colors;
+	
+	/// <summary>Gets the number of colors in the palette.</summary>
+	public int Count => _colors.Length;
+	
+	public Palette(IEnumerable<Color> colors) : this([.. colors]) {
 	}
-
-	public Color[] AsArray() {
-		var copyArray = colors;
-
-		// This is safe behaviour, as `ImmutableArray<T>` has same layout as `T[]`
-		return Unsafe.As<ImmutableArray<Color>, Color[]>(ref copyArray);
+	
+	public Palette(ImmutableArray<Color> colors) {
+		_colors = colors;
 	}
 }

@@ -15,25 +15,22 @@
 //
 
 using AnyPaletteShader.Utilities;
-using log4net;
 using System.Diagnostics.CodeAnalysis;
 using Terraria;
 
 namespace AnyPaletteShader.Graphics;
 
 public static class RenderTargets {
-	private static ILog Log => AnyPaletteShader.Log;
-
 	[MaybeNull] public static ScreenRenderTarget ScreenTarget { get; private set; }
-
+	
 	public static void Load() {
 		ThreadUtilities.RunOnMainThreadAndWait(static () => {
 			ScreenTarget = new ScreenRenderTarget(Main.graphics.GraphicsDevice);
-
-			Log.Info("Initialized render targets");
+			
+			AnyPaletteShader.Log.Info("Initialized render targets");
 		});
 	}
-
+	
 	public static void Unload() {
 		if (ScreenTarget != null) {
 			ThreadUtilities.RunOnMainThreadAndWait(static () => {

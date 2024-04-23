@@ -1,36 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="..\tModLoader.targets" />
-  
-  <!-- Properties -->
+	
+	<!-- Properties -->
 	<PropertyGroup>
 		<AssemblyName>AnyPaletteShader</AssemblyName>
-		<TargetFramework>net6.0</TargetFramework>
-		<PlatformTarget>AnyCPU</PlatformTarget>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
+		<OutDir>bin</OutDir>
 		
 		<NoWarn>$(NoWarn);MSB3270;X4717;CS0436</NoWarn>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 	
-  <!-- References -->
 	<ItemGroup>
-		<PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
-		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
-
-    <!-- We do not publicize methods cause they will cause issues if one of publicized methods is overriden -->
-		<Publicize Include="tModLoader" PublicizeTarget="Fields, Types" />
+		<AdditionalFiles Remove="**/*.fx" />
 	</ItemGroup>
-
-  <!-- Shader compiling -->
+	
+	<!-- Shader compiling -->
 	<Target Name="CompileShaders" BeforeTargets="Build" Condition="$(OS) == 'Windows_NT'">
 		<ItemGroup>
-			<EffectFiles Include="Effects/**/*.fx" />
-			<FxcFiles Include="Effects/**/*.fxc" />
+			<EffectFiles Include="Effects\Source\**\*.fx" />
+			<FxcFiles Include="Effects\*.fxc" />
 		</ItemGroup>
-
+		
+		<!-- Delete existing compiled files -->
 		<Delete Files="%(FxcFiles.Identity)" Condition="Exists('%(FxcFiles.Identity)')" />
-		<Exec Command="fxc /T fx_2_0 /Fo Effects/$([System.IO.Path]::GetFileNameWithoutExtension('%(EffectFiles.FullPath)')).fxc /Od %(EffectFiles.Identity)" Condition="Exists('%(EffectFiles.Identity)')" />
+		
+		<Exec 
+				Command="fxc /T fx_2_0 /Od %(EffectFiles.Identity) /Fo Effects\$([System.IO.Path]::GetFileNameWithoutExtension('%(EffectFiles.FullPath)')).fxc"
+				Condition="Exists('%(EffectFiles.Identity)')"
+		/>
 	</Target>
 </Project>
