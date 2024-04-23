@@ -37,11 +37,11 @@ jobs:
     - name: Copy shaders compiler
       run: |
         cd ..
-        echo "$cd"
+        echo "'$(cd)'"
 
-        cd AnyPaletteShader\.github
-        echo "$cd"
-        
+        cd AnyPaletteShader/.github
+        echo "'$(cd)'"
+
         xcopy fxc.exe $cd /Y /D
 
         cd ..
