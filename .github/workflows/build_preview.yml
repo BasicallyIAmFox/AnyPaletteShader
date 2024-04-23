@@ -1,0 +1,38 @@
+name: Build (tML Preview)
+
+on:
+  push:
+    branches: [gh_actions_test, main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Unzip tML
+      run: |
+        cd ..
+        mkdir tmod
+        cd tmod
+        curl https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip -L --output tModLoader.zip
+        unzip tModLoader.zip
+        cd ..
+    
+    - name: Create tModLoader.targets
+      run: |
+        cd ..
+
+        echo '' > tModLoader.targets
+        echo '<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">' >> tModLoader.targets
+        echo '  <Import Project="tmod/tMLMod.targets" />                                               ' >> tModLoader.targets
+        echo '</Project>                                                                               ' >> tModLoader.targets
+
+        echo 'Contents of tModLoader.targets:'
+        type tModLoader.targets
+        
+    - name: Build
+      run: dotnet build AnyPaletteShader.sln

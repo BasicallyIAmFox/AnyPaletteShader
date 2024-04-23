@@ -3,6 +3,8 @@
 	
 	<!-- Properties -->
 	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		
 		<AssemblyName>AnyPaletteShader</AssemblyName>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
@@ -12,14 +14,10 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 	
-	<ItemGroup>
-		<AdditionalFiles Remove="**/*.fx" />
-	</ItemGroup>
-	
 	<!-- Shader compiling -->
 	<Target Name="CompileShaders" BeforeTargets="Build" Condition="$(OS) == 'Windows_NT'">
 		<ItemGroup>
-			<EffectFiles Include="Effects\Source\**\*.fx" />
+			<EffectFiles Include="Effects\*.fx" />
 			<FxcFiles Include="Effects\*.fxc" />
 		</ItemGroup>
 		
@@ -27,8 +25,8 @@
 		<Delete Files="%(FxcFiles.Identity)" Condition="Exists('%(FxcFiles.Identity)')" />
 		
 		<Exec 
-				Command="fxc /T fx_2_0 /Od %(EffectFiles.Identity) /Fo Effects\$([System.IO.Path]::GetFileNameWithoutExtension('%(EffectFiles.FullPath)')).fxc"
-				Condition="Exists('%(EffectFiles.Identity)')"
+			Command="fxc /T fx_2_0 /Od %(EffectFiles.Identity) /Fo Effects\$([System.IO.Path]::GetFileNameWithoutExtension('%(EffectFiles.FullPath)')).fxc"
+			Condition="Exists('%(EffectFiles.Identity)')"
 		/>
 	</Target>
 </Project>
