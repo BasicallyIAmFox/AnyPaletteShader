@@ -31,11 +31,12 @@ jobs:
         echo '  <Import Project="tmod/tMLMod.targets" />                                               ' >> tModLoader.targets
         echo '</Project>                                                                               ' >> tModLoader.targets
 
+        echo 'Contents of tModLoader.targets:'
+        type tModLoader.targets
+
     - name: Copy shaders compiler
       run: |
         cd ..
-        echo %cd%
-        
         xcopy "AnyPaletteShader\.github\fxc.exe" "%cd%" /Y /D
     
     - name: Build
