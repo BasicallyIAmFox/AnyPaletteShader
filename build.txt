@@ -7,4 +7,4 @@ hideResources = false
 includeSource = false
 side = Client
 
-buildIgnore = .gitattributes, .gitignore, .editorconfig, .github/*, .idea/*, .vs/*, bin/*, obj/*, *.csproj, *.sln, *.sln.DotSettings, Assets/concept.png, Assets/Cursed.png, Effects/Compiler/*, Effects/Source/*
+buildIgnore = .gitattributes, .gitignore, .editorconfig, .github/*, .idea/*, .vs/*, bin/*, obj/*, *.csproj, *.sln, *.sln.DotSettings, Assets/concept.png, Assets/Cursed.png, Effects/Source/*

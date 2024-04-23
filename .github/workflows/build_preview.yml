@@ -33,13 +33,6 @@ jobs:
 
         echo 'Contents of tModLoader.targets:'
         type tModLoader.targets
-
-    - name: Copy shaders compiler
-      run: |
-        cd ..
-        xcopy "//AnyPaletteShader/.github/fxc.exe" "$cd" /Y /D
-
-        cd ..
-    
+        
     - name: Build
       run: dotnet build AnyPaletteShader.sln
