@@ -38,7 +38,13 @@ jobs:
       run: |
         cd ..
         echo "$cd"
-        xcopy "AnyPaletteShader\.github\fxc.exe" "$cd" /Y /D
+
+        cd AnyPaletteShader\.github
+        echo "$cd"
+        
+        xcopy fxc.exe $cd /Y /D
+
+        cd ..
     
     - name: Build
       run: dotnet build AnyPaletteShader.sln
