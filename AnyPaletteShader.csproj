@@ -14,14 +14,10 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 	
-	<ItemGroup>
-		<AdditionalFiles Remove="**/*.fx" />
-	</ItemGroup>
-	
 	<!-- Shader compiling -->
 	<Target Name="CompileShaders" BeforeTargets="Build" Condition="$(OS) == 'Windows_NT'">
 		<ItemGroup>
-			<EffectFiles Include="Effects\Source\**\*.fx" />
+			<EffectFiles Include="Effects\*.fx" />
 			<FxcFiles Include="Effects\*.fxc" />
 		</ItemGroup>
 		
