@@ -34,13 +34,7 @@ jobs:
     - name: Copy shaders compiler
       run: |
         cd ..
-        set global_folder=%cd%
-        echo Global Folder is %global_folder%
-
-        cd AnyPaletteShader/.github
-        xcopy /Y %cd%/fxc.exe %global_folder%
-
-        cd ..
+        xcopy /Y 'AnyPaletteShader/.github/fxc.exe' %cd%
     
     - name: Build
       run: dotnet build AnyPaletteShader.sln
