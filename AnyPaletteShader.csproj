@@ -3,6 +3,8 @@
 	
 	<!-- Properties -->
 	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		
 		<AssemblyName>AnyPaletteShader</AssemblyName>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
