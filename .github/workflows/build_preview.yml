@@ -25,7 +25,7 @@ jobs:
         cd ..
         (
           echo ^<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"^>
-          echo ^  <Import Project="../../tmod/tMLMod.targets" /^>
+          echo ^  <Import Project="../tmod/tMLMod.targets" /^>
           echo ^</Project^>
         ) > tModLoader.targets
         cd ..
