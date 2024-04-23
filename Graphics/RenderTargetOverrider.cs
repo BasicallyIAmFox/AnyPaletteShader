@@ -17,6 +17,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
 using Terraria.ModLoader;
 
@@ -41,7 +42,9 @@ public sealed class RenderTargetOverrider {
 	}
 
 	internal static void Patch() {
-		var setRenderTargetsMethodInfo = typeof(GraphicsDevice).GetRuntimeMethod(nameof(GraphicsDevice.SetRenderTarget), [typeof(RenderTarget2D)])!;
+		var setRenderTargetsMethodInfo = typeof(GraphicsDevice).GetRuntimeMethod(nameof(GraphicsDevice.SetRenderTarget), [ typeof(RenderTarget2D) ]);
+
+		Debug.Assert(setRenderTargetsMethodInfo != null);
 
 		MonoModHooks.Add(setRenderTargetsMethodInfo, (Action<GraphicsDevice, RenderTarget2D?> orig, GraphicsDevice self, RenderTarget2D? renderTarget) => {
 			// renderTarget is null whenever it tries to set to 'draw to screen' thing.
