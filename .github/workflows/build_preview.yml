@@ -31,8 +31,6 @@ jobs:
 
         cd ..
         echo %cd%
-
-        @echo on
     
     - name: Build
       run: dotnet build AnyPaletteShader.sln
